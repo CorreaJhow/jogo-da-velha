@@ -27,7 +27,16 @@ def jogo_da_velha():
         exibir_tabuleiro(tabuleiro)
         print(f"Jogador {jogador_atual}, é sua vez!")
         linha = int(input("Escolha a linha (0, 1, 2): "))
+
+        while linha < 0 or linha > 2:
+            print("Linha inválida. Escolha entre 0, 1 ou 2.")
+            linha = int(input("Escolha a linha (0, 1, 2): "))
+
         coluna = int(input("Escolha a coluna (0, 1, 2): "))
+
+        while coluna < 0 or coluna > 2:
+            print("Coluna inválida. Escolha entre 0, 1 ou 2.")
+            coluna = int(input("Escolha a coluna (0, 1, 2): "))
         
         if tabuleiro[linha][coluna] == " ":
             tabuleiro[linha][coluna] = jogador_atual
@@ -40,6 +49,7 @@ def jogo_da_velha():
             print("Posição já ocupada, tente novamente.")
     exibir_tabuleiro(tabuleiro)
     print("Empate!")
+    
 if __name__ == "__main__":
     jogo_da_velha()
 
