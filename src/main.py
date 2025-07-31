@@ -61,6 +61,8 @@ def exibir_tabuleiro(tabuleiro):
 
 def jogo_da_velha(jogador1, jogador2, jogador): 
     tabuleiro = [' ' for _ in range(9)]
+    contadorJogadas = 0
+
     if jogador == jogador1:
         print("{} começa o jogo!".format(jogador1))
         jogadorX = jogador1
@@ -78,7 +80,8 @@ def jogo_da_velha(jogador1, jogador2, jogador):
             print("Casa inválida ou já ocupada. Tente novamente.")
             casaJogadorX = int(input("{} Escolha uma casa (1-9) para jogar: ".format(jogadorX)))
         tabuleiro[casaJogadorX - 1] = 'X'
-        ganhouX = verifica_vitoria(tabuleiro, rodada)
+        contadorJogadas = contadorJogadas + 1;
+        ganhouX = verifica_vitoria(tabuleiro, contadorJogadas)
 
         #verifica se o jogador X ganhou, se sim, limpa a tela e exibe o tabuleiro com a mensagem de vitória:
         if ganhouX:
@@ -88,25 +91,37 @@ def jogo_da_velha(jogador1, jogador2, jogador):
             input("Pressione Enter para continuar...")
             break
 
+        validaEmpate = all(casa != ' ' for casa in tabuleiro)
+        if validaEmpate:
+            limpar_console()
+            exibir_tabuleiro(tabuleiro)
+            print("O jogo terminou em empate!")
+            input("Pressione Enter para continuar...")
+            break   
+
         #se o jogador X não ganhou, é a vez do jogador O
         #limpar a tela e aparece novamente o tabuleito com a mensagem:
         limpar_console()
         exibir_tabuleiro(tabuleiro)
         casaJogadorO = int(input("{} Escolha uma casa (1-9) para jogar: ".format(jogadorO)))
-        while casaJogadorO < 1 or casaJogadorO > 9 or tabuleiro[casaJogadorO - 1] != ' ':
+        while casaJogadorO < 1 or casaJogadorO > 9 or casaJogadorO or tabuleiro[casaJogadorO - 1] != ' ':
             print("Casa inválida ou já ocupada. Tente novamente.")
             casaJogadorO = int(input("{} Escolha uma casa (1-9) para jogar: ".format(jogadorO)))
         tabuleiro[casaJogadorO - 1] = 'O'
-        ganhouO = verifica_vitoria(tabuleiro, rodada)
+        contadorJogadas = contadorJogadas + 1
+        ganhouO = verifica_vitoria(tabuleiro, contadorJogadas)
 
         #verifica se o jogador O ganhou, se sim, limpa a tela e exibe o tabuleiro com a mensagem de vitória:
+        #encerra o jogo
+
         if ganhouO:
             limpar_console()
             exibir_tabuleiro(tabuleiro)
+            print("---------")
             print("{} venceu o jogo!".format(jogadorO))
-            input("Pressione Enter para continuar...")
-            break
-
+            print("---------")
+            input("Pressione Enter para finalizar...")
+            
         #fazer validação de empate, se todar as casa de tabuleito forem diferente de ' ' e nenhum jogador ganhou, então o jogo terminou em empate
         validaEmpate = all(casa != ' ' for casa in tabuleiro)
         if validaEmpate:
@@ -116,24 +131,31 @@ def jogo_da_velha(jogador1, jogador2, jogador):
             input("Pressione Enter para continuar...")
             break   
 
+    #Agradecer a quem jogou, e finalizar jogo.
+    limpar_console()
+    print("Obrigado por jogar!")
+    print("Até a próxima!")
+
         
 #Função que valida se houve vitória, se jogada válida e se o jogo terminou em empate
 def verifica_vitoria(tabuleiro, rodada):
-    #Verifica se houve vitória
+    
     if rodada < 4:  # Menos de 5 jogadas, não é possível ter vencedor
         return False
     
-    if (tabuleiro[0] == tabuleiro[1] == tabuleiro[2] != ' ' or
-        tabuleiro[3] == tabuleiro[4] == tabuleiro[5] != ' ' or
-        tabuleiro[6] == tabuleiro[7] == tabuleiro[8] != ' ' or
-        tabuleiro[0] == tabuleiro[3] == tabuleiro[6] != ' ' or
-        tabuleiro[1] == tabuleiro[4] == tabuleiro[7] != ' ' or
-        tabuleiro[2] == tabuleiro[5] == tabuleiro[8] != ' ' or
-        tabuleiro[0] == tabuleiro[4] == tabuleiro[8] != ' ' or
-        tabuleiro[2] == tabuleiro[4] == tabuleiro[6] != ' '):
+    #Verifica se há vitória em linhas
+    for i in range(3):
+        if tabuleiro[i * 3] == tabuleiro[i * 3 + 1] == tabuleiro[i * 3 + 2] != ' ':
+            return True
+        
+    #Verifica se há vitória em colunas
+    for i in range(3):
+        if tabuleiro[i] == tabuleiro[i + 3] == tabuleiro[i + 6] != ' ':
+            return True
+        
+    #Verifica se há vitória em diagonais
+    if tabuleiro[0] == tabuleiro[4] == tabuleiro[8] != ' ' or tabuleiro[2] == tabuleiro[4] == tabuleiro[6] != ' ':
         return True
 
 if __name__ == "__main__":
     start()
-
-# Este é um jogo da velha simples em Python, onde dois jogadores podem jogar alternadamente.
