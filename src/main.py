@@ -5,6 +5,7 @@ print("Bem-vindo ao Jogo da Velha! \n")
 print("########################### \n")
 
 print("Instruções:")
+print("----------")
 
 def start():
     print("1. O tabuleiro é numerado de 0 a 8, como abaixo:")
@@ -69,53 +70,51 @@ def jogo_da_velha(jogador1, jogador2, jogador):
         jogadorX = jogador2
         jogadorO = jogador1
 
-    exibir_tabuleiro(tabuleiro)
-
-
     for rodada in range(9):
+        limpar_console()
+        exibir_tabuleiro(tabuleiro)
         casaJogadorX = int(input("{} Escolha uma casa (1-9) para jogar: ".format(jogadorX)))
-        while casaJogadorX < 1 or casaJogadorX > 9 or tabuleiro[casa - 1] != ' ':
+        while casaJogadorX < 1 or casaJogadorX > 9 or tabuleiro[casaJogadorX - 1] != ' ':
             print("Casa inválida ou já ocupada. Tente novamente.")
-            casa = int(input("{} Escolha uma casa (1-9) para jogar: ".format(jogadorX)))
-        tabuleiro[casa - 1] = 'X'
-        ganhou = verifica_vitoria(tabuleiro, rodada)
+            casaJogadorX = int(input("{} Escolha uma casa (1-9) para jogar: ".format(jogadorX)))
+        tabuleiro[casaJogadorX - 1] = 'X'
+        ganhouX = verifica_vitoria(tabuleiro, rodada)
 
-        if ganhou == True and rodada < 8: 
+        #verifica se o jogador X ganhou, se sim, limpa a tela e exibe o tabuleiro com a mensagem de vitória:
+        if ganhouX:
             limpar_console()
             exibir_tabuleiro(tabuleiro)
-            print("O jogador {} ganhou!".format(jogadorX))
+            print("{} venceu o jogo!".format(jogadorX))
             input("Pressione Enter para continuar...")
-            break;
-        else:
-            limpar_console()
-            exibir_tabuleiro(tabuleiro)
-            if rodada == 8:  # Se todas as casas foram preenchidas  
-                print("O jogo terminou em empate!")
-                input("Pressione Enter para continuar...")
-                break;
-        #limpar a tela e aparece novamente o tabuleito com a mensagem: Vez do jogador: 
+            break
+
+        #se o jogador X não ganhou, é a vez do jogador O
+        #limpar a tela e aparece novamente o tabuleito com a mensagem:
         limpar_console()
         exibir_tabuleiro(tabuleiro)
         casaJogadorO = int(input("{} Escolha uma casa (1-9) para jogar: ".format(jogadorO)))
-        while casaJogadorO < 1 or casaJogadorO > 9 or tabuleiro[casa - 1] != ' ':
+        while casaJogadorO < 1 or casaJogadorO > 9 or tabuleiro[casaJogadorO - 1] != ' ':
             print("Casa inválida ou já ocupada. Tente novamente.")
-            casa = int(input("{} Escolha uma casa (1-9) para jogar: ".format(jogadorO)))
-        tabuleiro[casa - 1] = 'O'
-        ganhou = verifica_vitoria(tabuleiro)
+            casaJogadorO = int(input("{} Escolha uma casa (1-9) para jogar: ".format(jogadorO)))
+        tabuleiro[casaJogadorO - 1] = 'O'
+        ganhouO = verifica_vitoria(tabuleiro, rodada)
 
-        if ganhou == True and rodada < 8: 
+        #verifica se o jogador O ganhou, se sim, limpa a tela e exibe o tabuleiro com a mensagem de vitória:
+        if ganhouO:
             limpar_console()
             exibir_tabuleiro(tabuleiro)
-            print("O jogador {} ganhou!".format(jogadorO))
+            print("{} venceu o jogo!".format(jogadorO))
             input("Pressione Enter para continuar...")
-            break;
-        else:
+            break
+
+        #fazer validação de empate, se todar as casa de tabuleito forem diferente de ' ' e nenhum jogador ganhou, então o jogo terminou em empate
+        validaEmpate = all(casa != ' ' for casa in tabuleiro)
+        if validaEmpate:
             limpar_console()
             exibir_tabuleiro(tabuleiro)
-            if rodada == 8:  # Se todas as casas foram preenchidas  
-                print("O jogo terminou em empate!")
-                input("Pressione Enter para continuar...")
-                break;
+            print("O jogo terminou em empate!")
+            input("Pressione Enter para continuar...")
+            break   
 
         
 #Função que valida se houve vitória, se jogada válida e se o jogo terminou em empate
@@ -123,18 +122,16 @@ def verifica_vitoria(tabuleiro, rodada):
     #Verifica se houve vitória
     if rodada < 4:  # Menos de 5 jogadas, não é possível ter vencedor
         return False
-    vitoria = [[0, 1, 2], [3, 4, 5], [6, 7, 8],  # Linhas
-               [0, 3, 6], [1, 4, 7], [2, 5, 8],  # Colunas
-               [0, 4, 8], [2, 4, 6]] # Diagonais
-    for linha in vitoria:
-        if tabuleiro[linha[0]] == tabuleiro[linha[1]] == tabuleiro[linha[2]] != ' ':
-            return True
-    # Verifica se o jogo terminou em empate
-    if rodada == 8:  # Se todas as casas foram preenchidas
-        print("O jogo terminou em empate!")
+    
+    if (tabuleiro[0] == tabuleiro[1] == tabuleiro[2] != ' ' or
+        tabuleiro[3] == tabuleiro[4] == tabuleiro[5] != ' ' or
+        tabuleiro[6] == tabuleiro[7] == tabuleiro[8] != ' ' or
+        tabuleiro[0] == tabuleiro[3] == tabuleiro[6] != ' ' or
+        tabuleiro[1] == tabuleiro[4] == tabuleiro[7] != ' ' or
+        tabuleiro[2] == tabuleiro[5] == tabuleiro[8] != ' ' or
+        tabuleiro[0] == tabuleiro[4] == tabuleiro[8] != ' ' or
+        tabuleiro[2] == tabuleiro[4] == tabuleiro[6] != ' '):
         return True
-    return False  # Jogo ainda não terminou
-
 
 if __name__ == "__main__":
     start()
